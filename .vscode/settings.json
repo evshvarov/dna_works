@@ -1,0 +1,7 @@
+{
+    "objectscript.conn.version": 3,
+    "objectscript.conn.ns": "DNA",
+    "objectscript.conn.port": 52773,
+    "objectscript.conn.active": true
+
+}
