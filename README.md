@@ -37,4 +37,6 @@ Build the cube:
 ```
 d $System.DeepSee.BuildCube("Triplets")  
 ```
+Open grafs on:
+http://127.0.0.1:52773/csp/dna/_DeepSee.UserPortal.DashboardViewer.zen?DASHBOARD=Results/TripletsDash.dashboard
 
