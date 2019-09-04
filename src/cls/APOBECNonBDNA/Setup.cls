@@ -9,6 +9,38 @@ Class APOBECNonBDNA.Setup
 /// ^seq(triplet,nontype) - the result with triplets and its frequency in nontypes
 Parameter NUC = "agct";
 
+Parameter SIDData = "^NonBDNA";
+
+Parameter SIDIndex = "^NonBDNAI";
+
+Parameter NontypesList = {$lb("APR","DR","GQ","IR","MR","STR","Z")};
+
+Parameter ChromosomeList = {..GetChromeList()};
+
+ClassMethod NontypeList() As %List
+{
+    Return $Listfromstring("APR,DR,GQ,IR,MR,STR,Z",",")
+}
+
+ClassMethod GetChromeList() As %List
+{
+    f i=1:1:22 s $p(chr,",",i)="chr"_i
+    s chr=chr_",MT,X,Y"
+    return $Listfromstring(chr,",")
+}
+
+ClassMethod TestData(ad, adx) As %Status
+{
+    s @ad@("DR","chr1","chr1_1_4_DR")="aaaa"
+    s @adx@("DR","chr1",1)="chr1_1_4_DR"
+    s @ad@("DR","chr1","chr1_3_6_DR")="aagg"
+    s @adx@("DR","chr1",3)="chr1_3_6_DR"
+    s @ad@("DR","chr1","chr1_6_8_DR")="gtt"
+    s @adx@("DR","chr1",6)="chr1_6_8_DR"
+    s @ad@("DR","chr1","chr1_9_10_DR")="cc"
+    s @adx@("DR","chr1",9)="chr1_9_10_DR"
+}
+
 ClassMethod Setup() As %Status
 {
     d ..Chromosomes()
@@ -19,34 +51,40 @@ ClassMethod Setup() As %Status
 
 Parameter Folder = "/iris/app/nonBDNA_parts/";
 
+///  ID=chr1_19494_19518_APR;tracts=3;composition=9A/7C/4G/4T;sequence=aatggcctagaatccgacccaataa
+
+
+/// ID=chr1_19494_19518_APR;
 ClassMethod LoadNonBDNA() As %Status
 {
 
 	do DISABLE^%SYS.NOJRN
-	k ^NonBDNA
-	s nontype=$O(^nontype(""))
-	while nontype'="" {
-		set chr=$O(^chr(""))
-		while chr'="" {
+    k @..#SIDData
+	k @..#SIDIndex
+    //s chrlist=..ChromeList()
+    s iter=0
+	while $ListNext(..#NontypesList,iter,nontype) {
+		set iter1=0
+        while $ListNext(..#ChromosomeList,iter1,chr) {
 			Set stream=##class(%Stream.FileCharacter).%New()
 			set filename = ..#Folder_^nontype(nontype)_"/gff/"_chr_"_"_nontype_".gff"
-			Set sc=stream.LinkToFile(filename)	
-			
+			Set sc=stream.LinkToFile(filename)			
 			write filename, !
-			
 			Set rec=stream.ReadLine()
-		
 			While 'stream.AtEnd 
 			{
-				s seq=$p(rec,"sequence=",2)	
-				if seq'="" set seq=$p(seq,";")
-				set ^NonBDNA(nontype,chr,$seq(^NonBDNA(nontype)))=seq
-				Set rec=stream.ReadLine()
-					
+                s seq=$p(rec,"sequence=",2)
+                if seq'="" {
+                    set seq=$p(seq,";")
+                    set SID=$p($p(rec,"ID=",2),";")
+                    set p1=$p(SID,"_",2)
+                    //set ^NonBDNA(nontype,chr,ID)=seq
+                    set @..#SIDData@(nontype,chr,SID)=seq
+                  set @..#SIDIndex@(nontype,chr,p1)=SID
+                    }
+				Set rec=stream.ReadLine()				
 			}
-		set chr=$O(^chr(chr))
 		}
-	s nontype=$O(^nontype(nontype))
 	}
 	do ENABLE^%SYS.NOJRN
 }
