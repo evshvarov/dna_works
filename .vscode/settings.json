@@ -3,6 +3,6 @@
     "objectscript.conn.ns": "DNA",
     "objectscript.conn.port": 52773,
     "objectscript.conn.active": true,
-    "objectscript.export.category": "CLS=cls"
+    "objectscript.export.addCategory": true
 
 }

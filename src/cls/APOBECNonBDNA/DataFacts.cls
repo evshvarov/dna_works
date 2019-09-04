@@ -10,7 +10,7 @@ Property Amount As %Integer;
 ClassMethod LoadData() As %Status
 {
     do DISABLE^%SYS.NOJRN
-
+    d ..%KillExtent()
     s trip=$O(^seq(""))
     while trip'="" {
         s nontype=$O(^seq(trip,""))
