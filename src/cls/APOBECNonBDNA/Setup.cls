@@ -15,7 +15,7 @@ Parameter SIDIndex = "^NonBDNAI";
 
 Parameter NontypesList = {$lb("APR","DR","GQ","IR","MR","STR","Z")};
 
-Parameter ChromosomeList = {..GetChromeList()};
+Parameter ChromosomeList = {$lb("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chr20","chr21","chr22","MT","X","Y")};
 
 ClassMethod NontypeList() As %List
 {
@@ -52,8 +52,6 @@ ClassMethod Setup() As %Status
 Parameter Folder = "/iris/app/nonBDNA_parts/";
 
 ///  ID=chr1_19494_19518_APR;tracts=3;composition=9A/7C/4G/4T;sequence=aatggcctagaatccgacccaataa
-
-
 /// ID=chr1_19494_19518_APR;
 ClassMethod LoadNonBDNA() As %Status
 {
