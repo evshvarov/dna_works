@@ -62,7 +62,7 @@ ClassMethod LoadNonBDNA() As %Status
     //s chrlist=..ChromeList()
     s iter=0
 	while $ListNext(..#NontypesList,iter,nontype) {
-		set iter1=0
+        set iter1=0
         while $ListNext(..#ChromosomeList,iter1,chr) {
 			Set stream=##class(%Stream.FileCharacter).%New()
 			set filename = ..#Folder_^nontype(nontype)_"/gff/"_chr_"_"_nontype_".gff"

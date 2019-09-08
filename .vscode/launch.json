@@ -5,7 +5,7 @@
         "type": "objectscript",
         "request": "launch",
         "name": "ObjectScript Debug Class", 
-        "program": "##class(APOBECNonBDNA.DataAnalysis).run1()",
+        "program": "##class(APOBECNonBDNA.DataAnalysis).run()",
       },
       {
         "type": "objectscript",

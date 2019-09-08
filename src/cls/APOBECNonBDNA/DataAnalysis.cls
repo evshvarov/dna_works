@@ -1,16 +1,29 @@
 Class APOBECNonBDNA.DataAnalysis
 {
 
-ClassMethod run() As %Status
+ClassMethod run1() As %Status
 {
 	k ^seq
-	k ^NonBDNAU
 	s ad=##class(APOBECNonBDNA.Setup).#SIDData
-	m ^NonBDNAU=@ad
-	d ..UniteDiapasons3("^Test","^NonBDNAU",ad)
+	s adx=##class(APOBECNonBDNA.Setup).#SIDIndex
+	w "Setup data...",!
+	d ##class(APOBECNonBDNA.Setup).Setup()
+	d ##class(APOBECNonBDNA.Setup).LoadNonBDNA()
+	
+	s adcross="^cross" k @adcross
+	w "Checking united diapazones...",!
+	d ..CheckAllBoundaries1(adcross,ad,adx)
+	s adex="^Run" k @adex
+	m @adex=@ad
+	w "Uniting diapazones ...",!
+	d ..UniteDiapasons3(adcross,adex,ad)
+	w "Analizing diapazones on triplets...",!
+	d ..AnalyzeAll(adex)
+	d ##class(APOBECNonBDNA.DataFacts).LoadData()
+	d $System.DeepSee.BuildCube("Triplets")
 }
 
-ClassMethod run0() As %Status
+ClassMethod run() As %Status
 {
 	k ^seq
 	s ad=##class(APOBECNonBDNA.Setup).#SIDData
@@ -46,6 +59,7 @@ ClassMethod testrun2() As %Status
 	d ..UniteDiapasons3("^Test2","^Test",ad)
 }
 
+/// go through cross to change united
 ClassMethod UniteDiapasons3(cross, united, ad) As %Status
 {
 	do DISABLE^%SYS.NOJRN
@@ -75,7 +89,7 @@ ClassMethod Swaplink1(cross, united, c, c2, ad) As %Status
 		set nontype=$p(c2,"_",4)
 		set c("start")=$P(c,"_",2)
 		set c2("start")=$P(c2,"_",2)
-		set c("seq")=@ad@(nontype,chr,c)
+		set c("seq")=@united@(nontype,chr,c)
 		set c2("seq")=@united@(nontype,chr,c2)
 		set newseq=$E(c("seq"),1,c2("start")-c("start"))_c2("seq")
 		s @united@(nontype,chr,c)=newseq
@@ -84,14 +98,13 @@ ClassMethod Swaplink1(cross, united, c, c2, ad) As %Status
 
 /// set ^NonBDNA(nontype,chr,seqid,"p2")=p2
 /// set ^NonBDNAPos(nontype,chr,"s",p1)=seqid
-ClassMethod CheckAllBoundaries(cross = "^Test2", ad, adx) As %Status
+ClassMethod CheckAllBoundaries1(cross = "^Test2", ad, adx) As %Status
 {
 	k @cross
-	m @cross=@ad
 	s nontypelist=##class(APOBECNonBDNA.Setup).NontypeList()
 	s iter=0
 	while $Listnext(nontypelist,iter,nontype) {
-		d ..CheckBoundaries(nontype,$na(@cross@(nontype)),ad,adx)
+		d ..CheckBoundaries1(nontype,$na(@cross@(nontype)),ad,adx)
 	}
 }
 
@@ -106,7 +119,7 @@ ClassMethod CheckBoundaries1(nontype, cross, ad, adx) As %Status
 		while $Listnext(chrlist,iter,chr) {
 			write chr,!
 			s sid="" for { 
-				s sid=$O(^NonBDNA(nontype,chr,sid)) q:sid=""
+				s sid=$O(@ad@(nontype,chr,sid)) q:sid=""
 				s p1=$p(sid,"_",2)
 				s p2=$p(sid,"_",3)
 				set pp1=$O(@adx@(nontype,chr,p1))
@@ -121,6 +134,17 @@ ClassMethod CheckBoundaries1(nontype, cross, ad, adx) As %Status
 					}
 			}
 		}
+}
+
+ClassMethod CheckAllBoundaries(cross = "^Test2", ad, adx) As %Status
+{
+	k @cross
+	m @cross=@ad
+	s nontypelist=##class(APOBECNonBDNA.Setup).NontypeList()
+	s iter=0
+	while $Listnext(nontypelist,iter,nontype) {
+		d ..CheckBoundaries(nontype,$na(@cross@(nontype)),ad,adx)
+	}
 }
 
 ClassMethod CheckBoundaries(nontype, cross, ad, adx) As %Status
@@ -151,9 +175,9 @@ ClassMethod CheckBoundaries(nontype, cross, ad, adx) As %Status
 						k @adx@(nontype,chr,st2)
 						k @cross@(chr,sid1)
 						k @cross@(chr,sid2)
-						w sid1,!
-						w sid2,!
-						W "united=",sidu,!	
+						#; w sid1,!
+						#; w sid2,!
+						#; W "united=",sidu,!	
 						Continue
 					}
 				}
@@ -162,6 +186,7 @@ ClassMethod CheckBoundaries(nontype, cross, ad, adx) As %Status
 		}
 }
 
+/// ad - sequences in a form of @ad@(nontype,chr,sid)
 ClassMethod AnalyzeAll(ad) As %Status
 {
 	do DISABLE^%SYS.NOJRN
