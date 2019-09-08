@@ -18,9 +18,20 @@ For docker setup just place it in the root folder of the application near /src f
 0. Run the whole set of calculations:
 
 ```
-d ##class(APOBECNonBDNA.DataAnalysis).run()
+USER> zn "DNA"
+
+DNA> d ##class(APOBECNonBDNA.DataAnalysis).run()
 ```
 
 Open grafs on:
 http://127.0.0.1:52774/csp/dna/_DeepSee.UserPortal.DashboardViewer.zen?DASHBOARD=Results/TripletsDash.dashboard
 
+# Development
+To export dfi dashboards do:
+```
+Import isc.dev
+call
+
+DNA> d ##class(dev.code).workdir("/iris/app/src")
+DNA> d ##class(dev.code).export("*.DFI")
+```
