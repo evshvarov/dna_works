@@ -15,28 +15,12 @@ The applicatoin needs the files with nonBDNA parts. It expects it in the folder:
 ```
 For docker setup just place it in the root folder of the application near /src folder
 
-1. Setup lists. Open terminal and call setup method
+0. Run the whole set of calculations:
+
 ```
-d ##class(APOBECNonBDNA.Setup).Setup()
+d ##class(APOBECNonBDNA.DataAnalysis).run()
 ```
 
-2. Make the analysis. Run Analyze All method
-```
-d ##class(APOBECNonBDNA.DataAnalysis).AnalyzeAll()
-```
-
-3. Visualizing data. Setup SQL table.
-```
- d ##class(APOBECNonBDNA.DataFacts).LoadData()   
-```
-
-After that the results of the calculation will be available in APOBECNonBDNA.DataFacts table via ODBC/JDBC
-
-4. Visualize data with IRIS.
-Build the cube:
-```
-d $System.DeepSee.BuildCube("Triplets")  
-```
 Open grafs on:
-http://127.0.0.1:52773/csp/dna/_DeepSee.UserPortal.DashboardViewer.zen?DASHBOARD=Results/TripletsDash.dashboard
+http://127.0.0.1:52774/csp/dna/_DeepSee.UserPortal.DashboardViewer.zen?DASHBOARD=Results/TripletsDash.dashboard
 
